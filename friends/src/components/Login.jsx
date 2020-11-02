@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { CircularProgress } from '@material-ui/core';
 
-const Login = () => {
+const Login = (props) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   })
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const changeHandler = (e) => {
     setFormData({
@@ -16,15 +19,27 @@ const Login = () => {
 
   const login = (e) => {
     e.preventDefault();
-    axios
+    setIsLoading(true);
+    setTimeout(() => {axios
       .post(`http://localhost:5001/api/login`, { username: 'Lambda School', password: 'i<3Lambd4' })
       .then((res) => {
         console.log(res);
         localStorage.setItem("token", res.data.payload);
+        props.history.push("/friendsList");
       })
       .catch((err) => {
         console.log(err);
-      })
+      });
+    setFormData({
+      username: "",
+      password: "",
+    })
+    setIsLoading(false);
+  }, 2000)
+  }
+
+    if (isLoading) {
+    return <CircularProgress/>;
   }
 
   return (
